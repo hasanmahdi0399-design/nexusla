@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useT } from '../i18n/index.jsx'
+import { Card } from '../components/ui.jsx'
 // Template texts, not legal advice: have them reviewed before launch.
 const D = {
   terms: { en: ['Terms of Service', 'By using NEXUS you agree to these terms and the Marketplace Rules.', 'You must be able to form a binding agreement in your country. You are responsible for your account and everything posted from it.', 'We may remove content or suspend accounts that break the rules. The service is provided as is.'],
@@ -7,9 +9,9 @@ const D = {
   guidelines: { en: ['Community Guidelines', 'Be respectful. No harassment, hate, threats or spam.', 'Only post content you have the right to share. No illegal content.'],
     zh: ['社区准则', '互相尊重。禁止骚扰、仇恨、威胁和垃圾信息。', '只发布你有权分享的内容，禁止违法内容。'],
     id: ['Pedoman Komunitas', 'Saling menghormati. Dilarang melecehkan, menyebar kebencian, mengancam, atau spam.', 'Posting hanya konten yang berhak kamu bagikan. Dilarang konten ilegal.'] },
-  privacy: { en: ['Privacy Policy', 'We store your email, profile details, posts, listings, messages and uploaded media to run the service.', 'We do not sell your data and we do not collect payment information. Public profile content is visible to others.', 'You can permanently delete your account from Account & Privacy settings. Some records may be retained for security and legal reasons.'],
-    zh: ['隐私政策', '为提供服务，我们保存你的邮箱、资料、帖子、商品、消息和上传的媒体。', '我们不出售你的数据，也不收集支付信息。公开的资料内容对他人可见。', '你可以在账号与隐私设置中永久删除账号。出于安全和法律原因，部分记录可能会保留。'],
-    id: ['Kebijakan Privasi', 'Kami menyimpan email, data profil, posting, listing, pesan, dan media yang diunggah untuk menjalankan layanan.', 'Kami tidak menjual datamu dan tidak mengumpulkan informasi pembayaran. Konten profil publik dapat dilihat orang lain.', 'Kamu dapat meminta penghapusan akun dan data lewat administrator.'] },
+  privacy: { en: ['Privacy Policy', 'We store your username, profile details, posts, listings, messages and uploaded media to run the service. NEXUS never asks for your email address.', 'We do not sell your data and we do not collect payment information. Public profile content is visible to others.', 'You can permanently delete your account from Account & Privacy settings. Some records may be retained for security and legal reasons.'],
+    zh: ['隐私政策', '为提供服务，我们保存你的用户名、资料、帖子、商品、消息和上传的媒体。NEXUS 不会要求你提供邮箱。', '我们不出售你的数据，也不收集支付信息。公开的资料内容对他人可见。', '你可以在账号与隐私设置中永久删除账号。出于安全和法律原因，部分记录可能会保留。'],
+    id: ['Kebijakan Privasi', 'Kami menyimpan nama pengguna, data profil, posting, listing, pesan, dan media yang diunggah untuk menjalankan layanan. NEXUS tidak pernah meminta alamat email kamu.', 'Kami tidak menjual datamu dan tidak mengumpulkan informasi pembayaran. Konten profil publik dapat dilihat orang lain.', 'Kamu dapat meminta penghapusan akun dan data lewat administrator.'] },
   copyright: { en: ['Copyright Policy', 'LifeAfter and its trademarks, logos and game assets belong to their respective owners. NEXUS claims no ownership of them.', 'Do not upload content you do not have rights to. Send takedown requests to the administrators and we will review them.'],
     zh: ['版权政策', 'LifeAfter 及其商标、标志和游戏素材归各自权利人所有，NEXUS 不主张所有权。', '请勿上传你无权使用的内容。下架请求请发送给管理员，我们会审核。'],
     id: ['Kebijakan Hak Cipta', 'LifeAfter beserta merek dagang, logo, dan aset gamenya milik pemiliknya masing-masing. NEXUS tidak mengklaim kepemilikan.', 'Jangan unggah konten yang bukan hakmu. Kirim permintaan penghapusan ke administrator untuk ditinjau.'] },
@@ -28,13 +30,16 @@ const DISCLAIMER = {
   zh: 'NEXUS 是独立的玩家自制市场与游戏社区，与网易游戏或 LifeAfter 运营方无任何关联，亦未获其认可、赞助或官方授权。LifeAfter 及其商标、标志、游戏素材、角色和知识产权归其各自所有者所有。',
   id: 'NEXUS adalah marketplace dan komunitas game buatan penggemar yang independen. NEXUS tidak berafiliasi, didukung, disponsori, atau terhubung secara resmi dengan NetEase Games atau operator LifeAfter. LifeAfter beserta merek dagang, logo, aset game, karakter, dan kekayaan intelektualnya milik pemiliknya masing-masing.',
 }
-export default function Legal({ lang }) {
+export default function Legal() {
+  const { lang } = useT()
   const [k, setK] = useState('terms'); const [title, ...paras] = (D[k][lang] || D[k].en)
   return (
     <div className="mx-auto max-w-2xl space-y-3">
-      <div className="flex gap-2 overflow-x-auto">{Object.keys(D).map(x => <button key={x} onClick={() => setK(x)} className={`whitespace-nowrap rounded-full border px-3 py-1 text-sm ${k === x ? 'border-accent text-accent' : 'border-white/10 text-muted'}`}>{(D[x][lang] || D[x].en)[0]}</button>)}</div>
-      <h2 className="text-xl font-bold">{title}</h2>
-      {paras.map((p, i) => <p key={i} className="text-muted">{p}</p>)}
+      <div className="noscroll flex gap-2 overflow-x-auto">{Object.keys(D).map((x) => <button key={x} onClick={() => setK(x)} className={`chip ${k === x ? 'on' : ''}`}>{(D[x][lang] || D[x].en)[0]}</button>)}</div>
+      <Card hud className="space-y-3" key={k}>
+        <h1 className="font-display text-2xl font-bold">{title}</h1>
+        {paras.map((p, i) => <p key={i} className="text-muted">{p}</p>)}
+      </Card>
       <p className="rounded-xl border border-accent/30 bg-accent/5 p-3 text-sm text-muted">{DISCLAIMER[lang] || DISCLAIMER.en}</p>
     </div>
   )
